@@ -167,7 +167,6 @@ public class WebCrawler extends JFrame {
             parsedURLs = new HashSet<>();
             parsedPages = 0;
             maxDepth = depthCheckBox.isSelected() ? Integer.parseInt(depthTextField.getText()) : 0;
-            //maxDepth = Integer.parseInt(depthTextField.getText());
 
             int workersCount = Integer.parseInt(workersTextField.getText());
             int timeLimit = limitCheckBox.isSelected() ? Integer.parseInt(limitTextField.getText()) : 0;
