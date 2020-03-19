@@ -35,7 +35,7 @@ public class WebCrawler extends JFrame {
         result = new ArrayList<>();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 255);
+        setSize(600, 285);
         setLocationRelativeTo(null);
 
         JLabel urlTextFieldLabel = new JLabel("Start URL:");
@@ -130,9 +130,29 @@ public class WebCrawler extends JFrame {
         JButton exportButton = new JButton("Save");
         exportButton.setBounds(455, 185, 125, 25);
         exportButton.setName("ExportButton");
-        exportButton.addActionListener(actionEvent -> saveResult());
+
 
         add(exportButton);
+
+        JLabel mongoLabel = new JLabel("Mongo DB:");
+        mongoLabel.setBounds(5, 215, 140, 25);
+
+        JTextField mongoTextField = new JTextField();
+        mongoTextField.setBounds(150, 215, 300, 25);
+        mongoTextField.setText("mongodb://192.168.1.67");
+
+        add(mongoLabel);
+        add(mongoTextField);
+
+        JButton mongoSaveButton = new JButton("Save");
+        mongoSaveButton.setBounds(455, 215, 60, 25);
+
+        add(mongoSaveButton);
+
+        JButton mongoLoadButton = new JButton("Load");
+        mongoLoadButton.setBounds(520, 215, 60, 25);
+
+        add(mongoLoadButton);
 
         runButton.addActionListener(actionEvent -> {
             if (runButton.isSelected()) {
@@ -143,6 +163,19 @@ public class WebCrawler extends JFrame {
                 task.cancel(true);
                 task = null;
             }
+        });
+
+        exportButton.addActionListener(actionEvent -> saveResult());
+
+        mongoSaveButton.addActionListener(actionEvent -> {
+            MongoClient mongoClient = new MongoClient(mongoTextField.getText());
+            mongoClient.savePages(result);
+        });
+
+        mongoLoadButton.addActionListener(actionEvent -> {
+            MongoClient mongoClient = new MongoClient(mongoTextField.getText());
+            result = mongoClient.getPages();
+            parsedValueLabel.setText(Integer.toString(result.size()));
         });
 
         setLayout(null);
@@ -157,6 +190,7 @@ public class WebCrawler extends JFrame {
         private long parsedPages;
         LocalDateTime startTime;
         Phaser phaser;
+
         @Override
         protected Void doInBackground() {
 
@@ -232,8 +266,8 @@ public class WebCrawler extends JFrame {
     }
 
     public void updateMetrics(LocalDateTime startTime, long parsed) {
-        long elaplsed = ChronoUnit.SECONDS.between(startTime, LocalDateTime.now());
-        elapsedValueLabel.setText(elaplsed / 60 + ":" + elaplsed % 60);
+        long elapsed = ChronoUnit.SECONDS.between(startTime, LocalDateTime.now());
+        elapsedValueLabel.setText(elapsed / 60 + ":" + elapsed % 60);
         parsedValueLabel.setText(Long.toString(parsed));
     }
 
